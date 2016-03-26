@@ -221,10 +221,15 @@ func (b *Bridge) newService(port ServicePort, isgroup bool) *Service {
 	container := port.container
 	defaultName := strings.Split(path.Base(container.Config.Image), ":")[0]
 
-	// not sure about this logic. kind of want to remove it.
-	hostname := Hostname
-	if hostname == "" {
-		hostname = port.HostIP
+	var hostname string
+	if b.config.Hostname != "" {
+		hostname = b.config.Hostname
+	} else {
+		// not sure about this logic. kind of want to remove it.
+		hostname := Hostname
+		if hostname == "" {
+			hostname = port.HostIP
+		}
 	}
 	if port.HostIP == "0.0.0.0" {
 		ip, err := net.ResolveIPAddr("ip", hostname)
